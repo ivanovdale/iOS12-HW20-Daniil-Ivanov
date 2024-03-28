@@ -12,17 +12,23 @@ public final class HTTPClient {
 
         let urlRequest = URL(string: urlRequest)
         guard let url = urlRequest else { return }
+
         print("GET Request: \(url)\n")
+
         URLSession.shared.dataTask(with: url) { data, response, error in
+
+            // MARK: - Error handling
+
             if let error = error as? URLError {
                 print("Error occured.")
+
                 switch error.code {
                 case .notConnectedToInternet:
-                    print("The Internet connection appears to be offline. Please reconnect")
+                    completion(.failure(HTTPClientError.serverError(ServerError.networkProblem)), nil)
                 case .cannotFindHost:
-                    let host = url.host ?? "Unknown"
-                    print("Cannot find host \(host)")
-                default: print("An error occurred: \(error.localizedDescription)")
+                    completion(.failure(HTTPClientError.wrongURL), nil)
+                default:
+                    completion(.failure(HTTPClientError.serverError(ServerError.serverFail)), nil)
                 }
             } else if let response = response as? HTTPURLResponse {
                 print("Response code: \(response.statusCode)")
@@ -32,9 +38,16 @@ public final class HTTPClient {
                     guard let dataAsString = dataAsString else { return }
                     print(dataAsString)
                 } else if response.statusCode == 404 {
-                    print("Page not found. Check url request string.")
+                    self.mainAsync {
+                        completion(.failure(HTTPClientError.wrongURL), nil)
+                    }
                 }
             }
         }.resume()
+    }
+    // MARK: - Main async queue worker
+
+    private func mainAsync(block: @escaping () -> Void) {
+        DispatchQueue.main.async(execute: block)
     }
 }
