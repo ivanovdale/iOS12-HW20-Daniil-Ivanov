@@ -28,8 +28,10 @@ public final class MagicApi {
         }
     }
 
-    public func getCardByName(name: String) {
-        client.getData(urlRequest: Endpoint.cards(name: name).urlRequest)
+    public func getCardsByName(name: String, 
+                               completion: @escaping ObjectEndpointCompletion<Cards>) {
+        let urlRequest = Endpoint.cards(name: name).urlRequest
+        client.getData(urlRequest: urlRequest, completion: completion)
     }
 }
 
