@@ -1,9 +1,15 @@
 import Foundation
 
+public typealias ObjectEndpointCompletion<Object: Decodable> = (Result<Object, Error>,
+                                                                HTTPURLResponse?) -> ()
+
 public final class HTTPClient {
     public init() {}
 
-    public func getData(urlRequest: String, encoding: String.Encoding = .utf8) {
+    public func getData<Object: Decodable>(urlRequest: String, 
+                                           encoding: String.Encoding = .utf8,
+                                           completion: @escaping ObjectEndpointCompletion<Object>) {
+
         let urlRequest = URL(string: urlRequest)
         guard let url = urlRequest else { return }
         print("GET Request: \(url)\n")
