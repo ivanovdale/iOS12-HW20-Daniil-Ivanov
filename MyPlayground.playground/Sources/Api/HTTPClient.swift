@@ -41,9 +41,7 @@ public final class HTTPClient {
                     // MARK: - Data mapping
 
                     do {
-                        let objects = try self.map(Object.self, data: data)
-
-                        // TODO: - Почему при выполнении комплишна не на главной очереди, у нас не возникает ошибки?
+                        let objects = try self.mapToModel(Object.self, data: data)
 
                         self.mainAsync {
                             completion(.success(objects), response)
@@ -69,7 +67,7 @@ public final class HTTPClient {
 
     // MARK: - Data mapper
 
-    private func map<D: Decodable>(_ type: D.Type,
+    private func mapToModel<D: Decodable>(_ type: D.Type,
                                    data: Data?) throws -> D
     {
         guard let data = data else { throw HTTPClientError.noParsingData }

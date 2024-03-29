@@ -13,4 +13,4 @@ let completion: ObjectEndpointCompletion<Cards> = { result, _ in
 }
 
 magicApi.getCardsByName(name: "Black Lotus", completion: completion)
-magicApi.getCardsByName(name: "Opt", completion: completion)
+magicApi.getCardsByName(name: "\"Opt\"", completion: completion)
